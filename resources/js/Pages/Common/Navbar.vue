@@ -182,7 +182,9 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-
+defineProps({
+    company: Object
+});
 const dropdown = ref(false);
 
 
