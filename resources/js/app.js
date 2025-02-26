@@ -5,6 +5,7 @@ import PrimeVue from 'primevue/config';
 import 'primeicons/primeicons.css';
 import Aura from '@primeuix/themes/aura';
 import router from './router';
+import { createPinia } from 'pinia';
 
 // Use import.meta.glob to eagerly import all Vue pages
 const pages = import.meta.glob('./Pages/**/*.vue', { eager: true });
@@ -19,6 +20,7 @@ createInertiaApp({
   },
   setup({ el, App, props, plugin }) {
     const vueApp = createApp({ render: () => h(App, props) });
+    const pinia = createPinia();
 
     vueApp.use(plugin);
     vueApp.use(PrimeVue, {
@@ -33,6 +35,7 @@ createInertiaApp({
         }
      });
         vueApp.use(router);
+        vueApp.use(pinia);
 
         vueApp.mount(el);
   },
