@@ -2,14 +2,14 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useCompanyStore = defineStore('employee', () => {
-    const company = ref([]); // Reactive state
+    const company = ref([]);
 
     const setCompany = (data) => {
         company.value = data;
     };
 
-    const addCompany = (employee) => {
-        company.value.push(employee);
+    const addCompany = (company) => {
+        company.value.push(company);
     };
 
     return { company, setCompany, addCompany };

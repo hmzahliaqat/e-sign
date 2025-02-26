@@ -8,11 +8,16 @@
 <script setup>
 import Navbar from '../../Common/Navbar.vue';
 import { RouterView } from 'vue-router';
+import { useCompanyStore } from '../../../Store/companyStore';
+import { defineProps , onMounted } from 'vue';
 
-import { defineProps } from 'vue';
+const companyStore = useCompanyStore();
 
-const props = defineProps(['company']); // Get company from attrs
+const props = defineProps(['company']);
 const company = props?.company;
-
-
+onMounted(() => {
+  if (props.company) {
+    companyStore.setCompany(props.company);
+  }
+});
 </script>
