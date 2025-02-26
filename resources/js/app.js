@@ -4,6 +4,7 @@ import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import PrimeVue from 'primevue/config';
 import 'primeicons/primeicons.css';
 import Aura from '@primeuix/themes/aura';
+import router from './router';
 
 // Use import.meta.glob to eagerly import all Vue pages
 const pages = import.meta.glob('./Pages/**/*.vue', { eager: true });
@@ -31,6 +32,8 @@ createInertiaApp({
             }
         }
      });
+        vueApp.use(router);
+
         vueApp.mount(el);
   },
 });
