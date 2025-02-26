@@ -104,8 +104,8 @@
                     </div>
                 </div>
             </div>
-            <nav class="hidden lg:flex lg:space-x-8 lg:py-4" aria-label="Global">
-                <!-- Current: "bg-gray-100 text-gray-900", Default: "text-gray-900 hover:bg-gray-50 hover:text-gray-900" -->
+            <nav class="hidden lg:flex lg:space-x-8 lg:py-4 lg:justify-center w-full" aria-label="Global">
+            <!-- Current: "bg-gray-100 text-gray-900", Default: "text-gray-900 hover:bg-gray-50 hover:text-gray-900" -->
                 <router-link to="/company/dashboard"
                     class="bg-gray-100 text-gray-900 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium"
                     aria-current="page">
@@ -117,6 +117,13 @@
                     class="bg-gray-100 text-gray-900 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium"
                     aria-current="page">
                     Documents
+
+                </router-link>
+
+                <router-link to="/company/employees"
+                    class="bg-gray-100 text-gray-900 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium"
+                    aria-current="page">
+                    Employees
 
                 </router-link>
 
