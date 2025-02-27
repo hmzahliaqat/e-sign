@@ -15,8 +15,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('company_id');
             $table->string('title');
-            $table->text('description')->nullable();
             $table->string('file_path');
+            $table->string('pdf_path')->nullable();
+            $table->integer('page_count');
+            $table->string('file_type');
+            $table->boolean('is_template')->default(false);
             $table->timestamps();
             $table->foreign('company_id')
                   ->references('id')

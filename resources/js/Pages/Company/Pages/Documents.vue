@@ -3,26 +3,23 @@
         <div class="card p-2">
             <Toolbar class="mb-2">
                 <template #start>
-                    <Button label="Delete" icon="pi pi-trash" severity="danger" outlined @click="confirmDeleteSelected" :disabled="!selectedDocuments || !selectedDocuments.length" />
+                    <Button label="Delete" icon="pi pi-trash" severity="danger" outlined @click="confirmDeleteSelected"
+                        :disabled="!selectedDocuments || !selectedDocuments.length" />
                 </template>
 
                 <template #end>
-                    <FileUpload mode="basic" accept=".pdf,.doc,.docx,.txt" :maxFileSize="1000000" label="Import" customUpload chooseLabel="Import" class="mr-2" auto :chooseButtonProps="{ severity: 'secondary' }" />
+                    <FileUpload @uploader="uploadDocument" mode="basic" accept=".pdf,.doc,.docx,.txt"
+                        :maxFileSize="1000000" label="Import" customUpload chooseLabel="Import" class="mr-2" auto
+                        :chooseButtonProps="{ severity: 'secondary' }" />
+                        <small v-if="errorMessage" class="p-error">{{ errorMessage }}</small>
                 </template>
             </Toolbar>
 
-            <DataTable
-                ref="dt"
-                v-model:selection="selectedDocuments"
-                :value="documents"
-                dataKey="id"
-                :paginator="true"
-                :rows="8"
-                :filters="filters"
+            <DataTable ref="dt" v-model:selection="selectedDocuments" :value="documents" dataKey="id" :paginator="true"
+                :rows="8" :filters="filters"
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 :rowsPerPageOptions="[8, 20, 45]"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} documents"
-            >
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} documents">
                 <template #header>
                     <div class="flex flex-wrap gap-2 items-center justify-between">
                         <h4 class="m-0">Manage Documents</h4>
@@ -38,13 +35,14 @@
                 <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
                 <Column field="id" header="Document ID" sortable style="min-width: 12rem"></Column>
                 <Column field="title" header="Title" sortable style="min-width: 16rem"></Column>
-                <Column field="type" header="File Type" sortable style="min-width: 10rem"></Column>
+                <Column field="file_type" header="File Type" sortable style="min-width: 10rem"></Column>
                 <Column field="created_at" header="Created At" sortable style="min-width: 10rem"></Column>
-                <Column field="size" header="Size" sortable style="min-width: 8rem"></Column>
+                <Column field="page_count" header="Pages" sortable style="min-width: 8rem"></Column>
 
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
-                        <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteDocument(slotProps.data)" />
+                        <Button icon="pi pi-trash" outlined rounded severity="danger"
+                            @click="confirmDeleteDocument(slotProps.data)" />
                     </template>
                 </Column>
             </DataTable>
@@ -54,10 +52,7 @@
         <Dialog v-model:visible="deleteDocumentDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
             <div class="flex items-center gap-4">
                 <i class="pi pi-exclamation-triangle !text-3xl" />
-                <span v-if="document"
-                    >Are you sure you want to delete <b>{{ document.title }}</b
-                    >?</span
-                >
+                <span v-if="document">Are you sure you want to delete <b>{{ document.title }}</b>?</span>
             </div>
             <template #footer>
                 <Button label="No" icon="pi pi-times" text @click="deleteDocumentDialog = false" />
@@ -94,8 +89,13 @@ import FileUpload from 'primevue/fileupload';
 import Select from 'primevue/select';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
+import { useDocumentStore } from '../../../Store/documentStore';
 
+const uploading = ref(false);
+const uploadProgress = ref(0);
+const errorMessage = ref('');
 const dt = ref();
+const documentStore = useDocumentStore();
 const documents = ref([]);
 
 const documentDialog = ref(false);
@@ -104,95 +104,70 @@ const deleteDocumentsDialog = ref(false);
 const document = ref({});
 const selectedDocuments = ref();
 const filters = ref({
-    'global': {value: null},
+    'global': { value: null },
 });
 const submitted = ref(false);
 const statuses = ref([
-    {label: 'ACTIVE', value: 'ACTIVE'},
-    {label: 'ARCHIVED', value: 'ARCHIVED'},
-    {label: 'DRAFT', value: 'DRAFT'}
+    { label: 'ACTIVE', value: 'ACTIVE' },
+    { label: 'ARCHIVED', value: 'ARCHIVED' },
+    { label: 'DRAFT', value: 'DRAFT' }
 ]);
 
-// Static documents data
-const staticDocuments = [
-    {
-        id: 'DOC1001',
-        title: 'Annual Report 2024',
-        description: 'Financial performance report for fiscal year 2024',
-        type: 'PDF',
-        created_at: '2024-01-15',
-        size: 1250,
-        status: 'ACTIVE',
-        category: 'Financial',
-        version: '1.0'
-    },
-    {
-        id: 'DOC1002',
-        title: 'Contract Template',
-        description: 'Standard client contract template',
-        type: 'DOCX',
-        created_at: '2024-02-20',
-        size: 345,
-        status: 'ACTIVE',
-        category: 'Legal',
-        version: '2.1'
-    },
-    {
-        id: 'DOC1003',
-        title: 'Product Specifications',
-        description: 'Technical specs for new product line',
-        type: 'PDF',
-        created_at: '2024-03-05',
-        size: 4782,
-        status: 'ACTIVE',
-        category: 'Technical',
-        version: '1.3'
-    },
-    {
-        id: 'DOC1004',
-        title: 'Employee Handbook',
-        description: 'Company policies and procedures for employees',
-        type: 'PDF',
-        created_at: '2023-11-12',
-        size: 2458,
-        status: 'ARCHIVED',
-        category: 'Administrative',
-        version: '3.2'
-    },
-    {
-        id: 'DOC1005',
-        title: 'Project Proposal',
-        description: 'Proposal for client project implementation',
-        type: 'DOCX',
-        created_at: '2024-01-30',
-        size: 872,
-        status: 'DRAFT',
-        category: 'Technical',
-        version: '0.9'
-    },
-    {
-        id: 'DOC1006',
-        title: 'Tax Documents 2023',
-        description: 'Annual tax filing documents',
-        type: 'PDF',
-        created_at: '2024-02-25',
-        size: 3621,
-        status: 'ACTIVE',
-        category: 'Financial',
-        version: '1.0'
-    },
-    {
-        id: 'DOC1007',
-        title: 'Meeting Minutes',
-        description: 'Board meeting minutes from Q1 2024',
-        type: 'DOCX',
-        created_at: '2024-03-10',
-        size: 156,
-        status: 'DRAFT',
-        category: 'Administrative',
-        version: '0.8'
+
+
+
+const uploadDocument = async(event) => {
+
+    const file = event.files[0];
+
+    if (!file) {
+        errorMessage.value = 'No file selected';
+        return;
     }
-];
+    // Reset states
+    uploading.value = true;
+    uploadProgress.value = 0;
+    errorMessage.value = '';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('title', file.name);
+
+    try {
+        const response = await axios.post('/save/document', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+        //   onUploadProgress: (progressEvent) => {
+        //     uploadProgress.value = Math.round(
+        //       (progressEvent.loaded * 100) / progressEvent.total
+        //     );
+        //   }
+        });
+
+        // toast.add({
+        //   severity: 'success',
+        //   summary: 'Document Uploaded',
+        //   detail: 'Your document has been successfully uploaded',
+        //   life: 3000
+        // });
+
+        // Redirect to document editor
+        // window.location.href = `/documents/${response.data.id}/edit`;
+      } catch (error) {
+        console.error('Upload failed:', error);
+        errorMessage.value = error.response?.data?.message || 'Upload failed. Please try again.';
+
+        toast.add({
+          severity: 'error',
+          summary: 'Upload Failed',
+          detail: errorMessage.value,
+          life: 5000
+        });
+      } finally {
+        uploading.value = false;
+      }
+}
 
 
 const hideDialog = () => {
@@ -257,7 +232,6 @@ const deleteSelectedDocuments = () => {
 };
 
 onMounted(() => {
-    // Initialize with static documents
-    documents.value = [...staticDocuments];
+    documents.value = documentStore?.document;
 });
 </script>
