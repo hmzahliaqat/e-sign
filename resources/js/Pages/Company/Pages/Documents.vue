@@ -43,8 +43,11 @@
 
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
+                        <Button icon="pi pi-eye" class="mr-2" outlined rounded severity="info"
+                        @click="viewDocument(slotProps.data.id)" />
                         <Button icon="pi pi-trash" outlined rounded severity="danger"
                             @click="confirmDeleteDocument(slotProps.data)" />
+
                     </template>
                 </Column>
             </DataTable>
@@ -95,6 +98,7 @@ import { useDocumentStore } from '../../../Store/documentStore';
 import ProgressBar from 'primevue/progressbar';
 import {useToast} from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
+import { useRouter } from 'vue-router';
 
 const uploading = ref(false);
 const uploadProgress = ref(0);
@@ -103,7 +107,7 @@ const dt = ref();
 const documentStore = useDocumentStore();
 const documents = ref([]);
 const $toast = useToast();
-
+const router = useRouter();
 const documentDialog = ref(false);
 const deleteDocumentDialog = ref(false);
 const deleteDocumentsDialog = ref(false);
@@ -167,6 +171,9 @@ const uploadDocument = async(event) => {
       }
 }
 
+const viewDocument = (id) =>{
+    router.push(`/document/${id}/preview`);
+}
 
 const hideDialog = () => {
     documentDialog.value = false;
