@@ -44,7 +44,6 @@
 
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
-                        <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editDocument(slotProps.data)" />
                         <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteDocument(slotProps.data)" />
                     </template>
                 </Column>
@@ -222,10 +221,6 @@ const saveDocument = () => {
     }
 };
 
-const editDocument = (doc) => {
-    document.value = {...doc};
-    documentDialog.value = true;
-};
 
 const confirmDeleteDocument = (doc) => {
     document.value = doc;
