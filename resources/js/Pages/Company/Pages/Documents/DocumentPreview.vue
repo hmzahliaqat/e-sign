@@ -1,6 +1,6 @@
 <template>
-
+<h1>Preview</h1>
 </template>
 
 
-<script></script>
+<script setup></script>

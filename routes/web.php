@@ -8,6 +8,7 @@ use Inertia\Inertia;
 
 Route::get('/', [CompanyController::class , 'index']);
 Route::post('save/document', [DocumentController::class , 'upload']);
+Route::post('document/{id}/preview', [DocumentController::class , 'show']);
 
 
 

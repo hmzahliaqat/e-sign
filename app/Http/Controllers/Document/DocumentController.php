@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Document;
 use App\Http\Controllers\Controller;
 use App\Models\Document;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use setasign\Fpdi\Tcpdf\Fpdi;
 
 class DocumentController extends Controller
@@ -66,6 +67,12 @@ class DocumentController extends Controller
     }
 
 
+    public function show()
+    {
+
+
+        return Inertia::render('Company/Pages/Documents/DocumentPreview');
+    }
 
 
 

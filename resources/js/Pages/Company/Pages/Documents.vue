@@ -15,7 +15,7 @@
                 </template>
 
             </Toolbar>
-            <ProgressBar  :value="uploadProgress" class="mt-3"></ProgressBar>
+            <ProgressBar v-if="uploading"  :value="uploadProgress" class="mt-3 mb-3"></ProgressBar>
 
             <DataTable ref="dt" v-model:selection="selectedDocuments" :value="documents" dataKey="id" :paginator="true"
                 :rows="8" :filters="filters"
@@ -93,6 +93,8 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import { useDocumentStore } from '../../../Store/documentStore';
 import ProgressBar from 'primevue/progressbar';
+import {useToast} from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
 
 const uploading = ref(false);
 const uploadProgress = ref(0);
@@ -100,6 +102,7 @@ const errorMessage = ref('');
 const dt = ref();
 const documentStore = useDocumentStore();
 const documents = ref([]);
+const $toast = useToast();
 
 const documentDialog = ref(false);
 const deleteDocumentDialog = ref(false);
@@ -146,24 +149,18 @@ const uploadDocument = async(event) => {
           }
         });
 
-        toast.add({
-          severity: 'success',
-          summary: 'Document Uploaded',
-          detail: 'Your document has been successfully uploaded',
-          life: 3000
-        });
 
+        $toast.success('Document uploaded!',{
+            position:'top-right',
+        });
         // Redirect to document editor
-        // window.location.href = `/documents/${response.data.id}/edit`;
+        window.location.href = `/company/document/${response.data.id}/preview`;
       } catch (error) {
         console.error('Upload failed:', error);
         errorMessage.value = error.response?.data?.message || 'Upload failed. Please try again.';
 
-        toast.add({
-          severity: 'error',
-          summary: 'Upload Failed',
-          detail: errorMessage.value,
-          life: 5000
+        $toast.error('Upload failed!',{
+            position:'top-right',
         });
       } finally {
         uploading.value = false;
