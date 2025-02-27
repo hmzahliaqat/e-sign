@@ -38,7 +38,7 @@
                 </template>
 
                 <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
-                <Column field="employeeId" header="Employee ID" sortable style="min-width: 12rem"></Column>
+                <Column field="id" header="Employee ID" sortable style="min-width: 12rem"></Column>
                 <Column field="name" header="Name" sortable style="min-width: 16rem"></Column>
 
 
@@ -141,7 +141,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref , onMounted } from 'vue';
 // import { FilterMatchMode } from 'primevue/api';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -158,19 +158,11 @@ import Tag from 'primevue/tag';
 import Select from 'primevue/select';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
+import { useCompanyStore } from '../../../Store/companyStore';
 
 const dt = ref();
-const employees = ref([
-    {
-        id: '1001',
-        employeeId: 'EMP001',
-        name: 'John Smith',
-        description: 'Senior Software Developer with 8 years experience in full-stack development.',
-        salary: 85000,
-        email: 'hmzah@gmail.com',
-        created_at:'27 Feb 2022',
-    },
-]);
+const companyStore = useCompanyStore();
+const employees = ref([]);
 
 const employeeDialog = ref(false);
 const deleteEmployeeDialog = ref(false);
@@ -269,20 +261,7 @@ const deleteSelectedEmployees = () => {
     deleteEmployeesDialog.value = false;
     selectedEmployees.value = null;
 };
-
-const getStatusLabel = (status) => {
-    switch (status) {
-        case 'ACTIVE':
-            return 'success';
-
-        case 'LEAVE':
-            return 'warn';
-
-        case 'INACTIVE':
-            return 'danger';
-
-        default:
-            return null;
-    }
-};
+onMounted(() => {
+    employees.value = companyStore?.company?.employees;
+});
 </script>
