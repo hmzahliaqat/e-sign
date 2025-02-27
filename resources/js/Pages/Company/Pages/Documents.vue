@@ -13,7 +13,9 @@
                         :chooseButtonProps="{ severity: 'secondary' }" />
                         <small v-if="errorMessage" class="p-error">{{ errorMessage }}</small>
                 </template>
+
             </Toolbar>
+            <ProgressBar  :value="uploadProgress" class="mt-3"></ProgressBar>
 
             <DataTable ref="dt" v-model:selection="selectedDocuments" :value="documents" dataKey="id" :paginator="true"
                 :rows="8" :filters="filters"
@@ -90,6 +92,7 @@ import Select from 'primevue/select';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import { useDocumentStore } from '../../../Store/documentStore';
+import ProgressBar from 'primevue/progressbar';
 
 const uploading = ref(false);
 const uploadProgress = ref(0);
@@ -114,8 +117,6 @@ const statuses = ref([
 ]);
 
 
-
-
 const uploadDocument = async(event) => {
 
     const file = event.files[0];
@@ -138,19 +139,19 @@ const uploadDocument = async(event) => {
           headers: {
             'Content-Type': 'multipart/form-data'
           },
-        //   onUploadProgress: (progressEvent) => {
-        //     uploadProgress.value = Math.round(
-        //       (progressEvent.loaded * 100) / progressEvent.total
-        //     );
-        //   }
+          onUploadProgress: (progressEvent) => {
+            uploadProgress.value = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+          }
         });
 
-        // toast.add({
-        //   severity: 'success',
-        //   summary: 'Document Uploaded',
-        //   detail: 'Your document has been successfully uploaded',
-        //   life: 3000
-        // });
+        toast.add({
+          severity: 'success',
+          summary: 'Document Uploaded',
+          detail: 'Your document has been successfully uploaded',
+          life: 3000
+        });
 
         // Redirect to document editor
         // window.location.href = `/documents/${response.data.id}/edit`;
