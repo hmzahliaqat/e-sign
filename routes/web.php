@@ -13,19 +13,17 @@ Route::post('save/document', [DocumentController::class , 'upload']);
 Route::post('document/{id}/preview', [DocumentController::class , 'show']);
 
 
-Route::get('/secure-pdf/{filename}', function ($filename) {
-    // Ensure the file exists in the private documents folder
-    $path = $filename;
+// In your routes/api.php
+Route::get('/documents/view/{filename}', function ($filename) {
+    $path = storage_path('app/private/' . $filename);
 
-    if (!Storage::exists("private/$path")) {
+    if (!file_exists($path)) {
         abort(404);
     }
 
-    // Return the PDF with the correct response headers
-    return response()->file(storage_path("app/private/$path"), [
-        'Content-Type' => 'application/pdf',
-        'Content-Disposition' => 'inline; filename="' . basename($path) . '"',  // Ensures the PDF opens in browser
-    ]);
+    // Add any authorization logic here if needed
+
+    return response()->file($path);
 });
 
 

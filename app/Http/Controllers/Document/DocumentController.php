@@ -23,7 +23,7 @@ class DocumentController extends Controller
 
         $originalName = $file->getClientOriginalName();
         $extension = $file->getClientOriginalExtension();
-        $path = $file->store('documents');
+        $path = $file->store('documents' , 'public');
 
 
 
@@ -36,7 +36,7 @@ class DocumentController extends Controller
         if ($extension === 'pdf') {
             // Get PDF page count
             $pdf = new Fpdi();
-            $pageCount = $pdf->setSourceFile(storage_path('app/private/' . $path));
+            $pageCount = $pdf->setSourceFile(storage_path('app/public/' . $path));
         } else if (in_array($extension, ['doc', 'docx'])) {
 
             // Convert Word to PDF

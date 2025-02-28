@@ -11,11 +11,11 @@
                     <FileUpload @uploader="uploadDocument" mode="basic" accept=".pdf,.doc,.docx,.txt"
                         :maxFileSize="1000000" label="Import" customUpload chooseLabel="Import" class="mr-2" auto
                         :chooseButtonProps="{ severity: 'secondary' }" />
-                        <small v-if="errorMessage" class="p-error">{{ errorMessage }}</small>
+                    <small v-if="errorMessage" class="p-error">{{ errorMessage }}</small>
                 </template>
 
             </Toolbar>
-            <ProgressBar v-if="uploading"  :value="uploadProgress" class="mt-3 mb-3"></ProgressBar>
+            <ProgressBar v-if="uploading" :value="uploadProgress" class="mt-3 mb-3"></ProgressBar>
 
             <DataTable ref="dt" v-model:selection="selectedDocuments" :value="documents" dataKey="id" :paginator="true"
                 :rows="8" :filters="filters"
@@ -44,7 +44,7 @@
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
                         <Button icon="pi pi-eye" class="mr-2" outlined rounded severity="info"
-                        @click="viewDocument(slotProps.data.id)" />
+                            @click="viewDocument(slotProps.data.id)" />
                         <Button icon="pi pi-trash" outlined rounded severity="danger"
                             @click="confirmDeleteDocument(slotProps.data)" />
 
@@ -96,7 +96,7 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import { useDocumentStore } from '../../../Store/documentStore';
 import ProgressBar from 'primevue/progressbar';
-import {useToast} from 'vue-toast-notification';
+import { useToast } from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
 import { useRouter } from 'vue-router';
 
@@ -124,7 +124,7 @@ const statuses = ref([
 ]);
 
 
-const uploadDocument = async(event) => {
+const uploadDocument = async (event) => {
 
     const file = event.files[0];
 
@@ -143,35 +143,39 @@ const uploadDocument = async(event) => {
 
     try {
         const response = await axios.post('/save/document', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-          onUploadProgress: (progressEvent) => {
-            uploadProgress.value = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-          }
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            onUploadProgress: (progressEvent) => {
+                uploadProgress.value = Math.round(
+                    (progressEvent.loaded * 100) / progressEvent.total
+                );
+            }
         });
 
+        console.log(response?.data);
 
-        $toast.success('Document uploaded!',{
-            position:'top-right',
+
+        documentStore.addDocument(response?.data);
+
+        $toast.success('Document uploaded!', {
+            position: 'top-right',
         });
         // Redirect to document editor
-        window.location.href = `/company/document/${response.data.id}/preview`;
-      } catch (error) {
+        window.location.href = `/document/${response.data.id}/preview`;
+    } catch (error) {
         console.error('Upload failed:', error);
         errorMessage.value = error.response?.data?.message || 'Upload failed. Please try again.';
 
-        $toast.error('Upload failed!',{
-            position:'top-right',
+        $toast.error('Upload failed!', {
+            position: 'top-right',
         });
-      } finally {
+    } finally {
         uploading.value = false;
-      }
+    }
 }
 
-const viewDocument = (id) =>{
+const viewDocument = (id) => {
     router.push(`/document/${id}/preview`);
 }
 

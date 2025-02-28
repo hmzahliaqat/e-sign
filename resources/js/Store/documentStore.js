@@ -8,8 +8,8 @@ export const useDocumentStore = defineStore('document', () => {
         document.value = data;
     };
 
-    const addDocument = (document) => {
-        document.value.push(document);
+    const addDocument = (newDocument) => {
+        document.value.push(newDocument);
     };
 
     watch(document, (newVal) => {
