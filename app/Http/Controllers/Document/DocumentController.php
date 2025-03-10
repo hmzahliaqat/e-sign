@@ -116,9 +116,6 @@ class DocumentController extends Controller
     }
 
 
-
-
-
     private function convertWordToPdf($wordPath)
     {
         // You would need to install phpoffice/phpword

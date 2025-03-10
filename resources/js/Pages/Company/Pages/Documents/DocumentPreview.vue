@@ -303,9 +303,9 @@
 
       // Create a FormData object to send the file to the server
     const formData = new FormData();
-    const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
+    const blobreplace = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
 
-    formData.append('file', blob, filename);
+    formData.append('file', blobreplace, filename);
     formData.append('filepath', completePath); // Send the complete path
 
     // Use Laravel's CSRF token
