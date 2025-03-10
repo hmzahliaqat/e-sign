@@ -296,6 +296,43 @@
       // Update the PDF viewer to show the newly signed PDF
       pdfUrl.value = url;
 
+      const pathParts = fileName.value.split('/');
+
+      const filename = pathParts.pop();
+
+
+      // Create a FormData object to send the file to the server
+    const formData = new FormData();
+    const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
+
+    formData.append('file', blob, filename);
+    formData.append('filepath', completePath); // Send the complete path
+
+    // Use Laravel's CSRF token
+    formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+
+    // Send to a Laravel route
+    const response = await fetch('/replace-pdf', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to save the file');
+    }
+
+    const result = await response.json();
+
+    // Update the PDF viewer with a cache buster
+   // pdfUrl.value = `${result.file_url}?t=${new Date().getTime()}`;
+
+
+
+
       alert("PDF saved with your signature!");
     } catch (error) {
       console.error("Error saving PDF:", error);

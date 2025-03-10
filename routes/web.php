@@ -13,6 +13,11 @@ Route::post('save/document', [DocumentController::class , 'upload']);
 Route::post('document/{id}/preview', [DocumentController::class , 'show']);
 
 
+Route::post('/replace-pdf', [DocumentController::class , 'replacePdf']);
+
+
+
+
 // In your routes/api.php
 Route::get('/documents/view/{filename}', function ($filename) {
     $path = storage_path('app/private/' . $filename);

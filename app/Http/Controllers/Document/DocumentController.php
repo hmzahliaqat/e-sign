@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Document;
 use App\Http\Controllers\Controller;
 use App\Models\Document;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use setasign\Fpdi\Tcpdf\Fpdi;
 
@@ -76,6 +77,43 @@ class DocumentController extends Controller
 
 
 
+    public function replacePdf(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:pdf',
+            'filepath' => 'required|string'
+        ]);
+
+        // Get the file path
+        $filepath = $request->input('filepath');
+
+        // Store the new file, replacing the old one
+        if ($request->hasFile('file')) {
+            // Delete the existing file if it exists
+            if (Storage::exists($filepath)) {
+                Storage::delete($filepath);
+            }
+
+            // Store the new file at the same path
+            Storage::putFileAs(
+                dirname($filepath),
+                $request->file('file'),
+                basename($filepath)
+            );
+
+            // Return success response with the file URL
+            return response()->json([
+                'success' => true,
+                'message' => 'File replaced successfully',
+                'file_url' => Storage::url($filepath)
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'No file was uploaded'
+        ], 400);
+    }
 
 
 
