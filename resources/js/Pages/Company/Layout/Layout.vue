@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Navbar :company="company" />
+        <!-- <Navbar :company="company" /> -->
         <RouterView />
     </div>
 </template>

@@ -1,5 +1,8 @@
 <template>
     <div>
+        <ShareDrawer :visible="documentDrawerVisible" :id="documentId" />
+
+
         <div class="card p-2">
             <Toolbar class="mb-2">
                 <template #start>
@@ -47,6 +50,8 @@
                             @click="viewDocument(slotProps.data.id)" />
                         <Button icon="pi pi-trash" outlined rounded severity="danger"
                             @click="confirmDeleteDocument(slotProps.data)" />
+                        <Button icon="pi pi-share-alt" class="ml-2" outlined rounded severity="secondary"
+                            @click="shareDocument(slotProps.data.id)" />
 
                     </template>
                 </Column>
@@ -76,11 +81,14 @@
             </template>
         </Dialog>
     </div>
+
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 // import { FilterMatchMode } from 'primevue/api';
+
+import ShareDrawer from './Documents/ShareDrawer.vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
@@ -113,6 +121,9 @@ const deleteDocumentDialog = ref(false);
 const deleteDocumentsDialog = ref(false);
 const document = ref({});
 const selectedDocuments = ref();
+const documentId = ref(null);
+const documentDrawerVisible = ref(false);
+
 const filters = ref({
     'global': { value: null },
 });
@@ -177,6 +188,13 @@ const uploadDocument = async (event) => {
 
 const viewDocument = (id) => {
     router.push(`/document/${id}/preview`);
+}
+
+const shareDocument = (id) =>{
+
+    documentDrawerVisible.value = !documentDrawerVisible.value;
+    documentId.value = id;
+
 }
 
 const hideDialog = () => {
