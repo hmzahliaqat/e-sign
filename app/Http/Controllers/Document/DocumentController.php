@@ -61,7 +61,7 @@ class DocumentController extends Controller
             'pdf_path' => $pdfPath,
             'page_count' => $pageCount,
             'file_type' => $extension,
-            'company_id' => 1
+            'user_id' => 1
         ]);
 
         return response()->json($document, 201);

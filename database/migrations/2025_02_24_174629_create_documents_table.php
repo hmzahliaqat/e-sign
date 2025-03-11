@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('title');
             $table->string('file_path');
             $table->string('pdf_path')->nullable();
@@ -21,9 +21,9 @@ return new class extends Migration
             $table->string('file_type');
             $table->boolean('is_template')->default(false);
             $table->timestamps();
-            $table->foreign('company_id')
+            $table->foreign('user_id')
                   ->references('id')
-                  ->on('companies')
+                  ->on('users')
                   ->onDelete('cascade');
         });
     }

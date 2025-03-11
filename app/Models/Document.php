@@ -14,7 +14,7 @@ class Document extends Model
         'pdf_path',
         'page_count',
         'file_type',
-        'company_id'
+        'user_id'
     ];
 
 

@@ -13,13 +13,13 @@ return new class extends Migration
     {
             Schema::create('employees', function (Blueprint $table) {
                 $table->id();
-                $table->unsignedBigInteger('company_id');
+                $table->unsignedBigInteger('user_id');
                 $table->string('name');
                 $table->string('email')->unique();
                 $table->timestamps();
-                    $table->foreign('company_id')
+                    $table->foreign('user_id')
                       ->references('id')
-                      ->on('companies')
+                      ->on('users')
                       ->onDelete('cascade');
             });
     }
