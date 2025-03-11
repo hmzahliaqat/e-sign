@@ -70,8 +70,6 @@ class DocumentController extends Controller
 
     public function show()
     {
-
-
         return Inertia::render('Company/Pages/Documents/DocumentPreview');
     }
 
@@ -84,35 +82,25 @@ class DocumentController extends Controller
             'filepath' => 'required|string'
         ]);
 
-        // Get the file path
-        $filepath = $request->input('filepath');
+        $newFile = $request->file('file');
+        $fileName = basename($request->input('filepath')); // extract the file name from the path
 
-        // Store the new file, replacing the old one
-        if ($request->hasFile('file')) {
-            // Delete the existing file if it exists
-            if (Storage::exists($filepath)) {
-                Storage::delete($filepath);
-            }
+        // Define the storage directory path
+        $documentsPath = public_path('storage/documents');
+        $existingFilePath = $documentsPath . DIRECTORY_SEPARATOR . $fileName;
 
-            // Store the new file at the same path
-            Storage::putFileAs(
-                dirname($filepath),
-                $request->file('file'),
-                basename($filepath)
-            );
-
-            // Return success response with the file URL
-            return response()->json([
-                'success' => true,
-                'message' => 'File replaced successfully',
-                'file_url' => Storage::url($filepath)
-            ]);
+        // Check if the file exists
+        if (file_exists($existingFilePath)) {
+            // Remove the old file
+            unlink($existingFilePath);
+        } else {
+            return response()->json(['error' => 'File not found.'], 404);
         }
 
-        return response()->json([
-            'success' => false,
-            'message' => 'No file was uploaded'
-        ], 400);
+        $newFile->move($documentsPath, $fileName);
+
+        return response()->json(['message' => 'File replaced successfully.']);
+
     }
 
 

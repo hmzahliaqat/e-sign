@@ -26,8 +26,6 @@ Route::get('/documents/view/{filename}', function ($filename) {
         abort(404);
     }
 
-    // Add any authorization logic here if needed
-
     return response()->file($path);
 });
 
