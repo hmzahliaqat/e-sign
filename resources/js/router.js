@@ -1,10 +1,15 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Homepage from "./Pages/Company/Homepage.vue";
-import Dashboard from "./Pages/Company/Pages/Dashboard.vue";
+// import Dashboard from "./Pages/Company/Pages/Dashboard.vue";
 import Documents from "./Pages/Company/Pages/Documents.vue";
 import Employees from "./Pages/Company/Pages/Employees.vue";
 import DocumentPreview from "./Pages/Company/Pages/Documents/DocumentPreview.vue";
+import Dashboard from "./Pages/Dashboard.vue";
 const routes = [
+    {
+        path:"/dashboard",
+        component:Dashboard,
+    },
     {
         path: "/company",
         component: Homepage,

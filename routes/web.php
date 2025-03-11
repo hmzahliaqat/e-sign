@@ -2,13 +2,25 @@
 
 use App\Http\Controllers\Company\CompanyController;
 use App\Http\Controllers\Document\DocumentController;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
+Route::get('/', function () {
+    // return Inertia::render('Welcome', [
+    //     'canLogin' => Route::has('login'),
+    //     'canRegister' => Route::has('register'),
+    //     'laravelVersion' => Application::VERSION,
+    //     'phpVersion' => PHP_VERSION,
+    // ]);
 
-Route::get('/', [CompanyController::class , 'index']);
+        return Inertia::render('Auth/Login');
+
+});
+
+
+
+// Route::get('/', [CompanyController::class , 'index']);
 Route::post('save/document', [DocumentController::class , 'upload']);
 Route::post('document/{id}/preview', [DocumentController::class , 'show']);
 
@@ -34,3 +46,18 @@ Route::get('/documents/view/{filename}', function ($filename) {
 Route::get('/{any}', function () {
     return Inertia::render('Company/Layout/Layout');
 })->where('any', '.*');
+
+
+
+
+
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
+});
